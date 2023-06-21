@@ -22,6 +22,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-jdbc")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+	implementation("org.flywaydb:flyway-core")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	runtimeOnly("org.postgresql:postgresql")
