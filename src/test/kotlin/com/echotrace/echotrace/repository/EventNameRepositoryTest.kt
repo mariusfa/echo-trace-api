@@ -1,8 +1,6 @@
-package repository
+package com.echotrace.echotrace.repository
 
 import com.echotrace.echotrace.EchotraceApplication
-import com.echotrace.echotrace.repository.EventName
-import com.echotrace.echotrace.repository.EventNameRepository
 import org.flywaydb.core.Flyway
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -29,7 +27,7 @@ class EventNameRepositoryTest(
     }
 
     @Test
-    fun `test insert event`() {
+    fun `test insert EventName`() {
         flyway.migrate()
         val eventName = EventName(
             id = null,
@@ -41,7 +39,7 @@ class EventNameRepositoryTest(
     }
 
     @Test
-    fun `test get events`() {
+    fun `test get EventNames`() {
         flyway.migrate()
         val eventName = EventName(
             id = null,
@@ -54,7 +52,7 @@ class EventNameRepositoryTest(
     }
 
     @Test
-    fun `test get event by name`() {
+    fun `test get EventName by name`() {
         flyway.migrate()
         val eventName = EventName(
             id = null,
@@ -67,7 +65,7 @@ class EventNameRepositoryTest(
     }
 
     @Test
-    fun `test update event`() {
+    fun `test update EventName`() {
         flyway.migrate()
         val eventName = EventName(
             id = null,
@@ -87,7 +85,7 @@ class EventNameRepositoryTest(
     }
 
     @Test
-    fun `test delete event`() {
+    fun `test delete EventName`() {
         flyway.migrate()
         val eventName = EventName(
             id = null,
