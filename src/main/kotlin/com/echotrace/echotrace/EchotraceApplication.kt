@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class EchotraceApplication
 
 fun main(args: Array<String>) {
-	runApplication<EchotraceApplication>(*args)
+    runApplication<EchotraceApplication>(*args)
 }

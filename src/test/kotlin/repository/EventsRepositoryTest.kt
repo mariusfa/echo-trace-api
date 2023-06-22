@@ -4,16 +4,13 @@ import com.echotrace.echotrace.EchotraceApplication
 import com.echotrace.echotrace.repository.Event
 import com.echotrace.echotrace.repository.EventsRepository
 import org.flywaydb.core.Flyway
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest
 import org.springframework.context.annotation.Import
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.transaction.annotation.Transactional
 
 @JdbcTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -66,7 +63,7 @@ class EventsRepositoryTest(
         eventsRepository.insertEvent(event)
         val eventFound = eventsRepository.getEventByName(event.name)
         assert(eventFound != null)
-        assert(eventFound?.name ?: "" == event.name)
+        assert((eventFound?.name ?: "") == event.name)
     }
 
     @Test
@@ -86,7 +83,7 @@ class EventsRepositoryTest(
         eventsRepository.updateEvent(eventUpdated)
         val eventFoundUpdated = eventsRepository.getEventByName(eventUpdated.name)
         assert(eventFoundUpdated != null)
-        assert(eventFoundUpdated?.name ?: "" == eventUpdated.name)
+        assert((eventFoundUpdated?.name ?: "") == eventUpdated.name)
     }
 
     @Test
