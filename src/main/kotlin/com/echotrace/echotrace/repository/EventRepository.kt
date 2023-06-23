@@ -46,5 +46,18 @@ class EventRepository(
         ) ?: BigInteger.ZERO
     }
 
+    fun deleteAllEvents(eventNameId: Long) {
+        val sql = """
+            DELETE FROM echotraceschema.events
+            WHERE eventname_id = :eventname_id
+        """.trimIndent()
+
+        namedParameterJdbcTemplate.update(
+            sql,
+            mapOf(
+                "eventname_id" to eventNameId
+            )
+        )
+    }
 
 }
