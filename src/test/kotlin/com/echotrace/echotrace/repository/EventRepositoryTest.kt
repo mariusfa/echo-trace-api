@@ -145,4 +145,42 @@ class EventRepositoryTest(
         val count = eventRepository.countEvents(eventNameStored.id!!)
         assert(count == BigInteger.valueOf(0))
     }
+
+    @Test
+    fun `delete all events given eventNameId and ignore other events`() {
+        flyway.migrate()
+        val eventName = EventName(
+            id = null,
+            name = "test event"
+        )
+        val wrongEventName = EventName(
+            id = null,
+            name = "wrong event"
+        )
+        eventNameRepository.insertEventName(eventName)
+        eventNameRepository.insertEventName(wrongEventName)
+        val eventNameStored = eventNameRepository.getEventNameByName("test event")!!
+        val wrongEeventNameStored = eventNameRepository.getEventNameByName("wrong event")!!
+
+        eventRepository.insertEvent(Event(
+            id = null,
+            eventName = eventNameStored,
+            createdAt = OffsetDateTime.now(),
+        ))
+        eventRepository.insertEvent(Event(
+            id = null,
+            eventName = eventNameStored,
+            createdAt = OffsetDateTime.now(),
+        ))
+        eventRepository.insertEvent(Event(
+            id = null,
+            eventName = wrongEeventNameStored,
+            createdAt = OffsetDateTime.now(),
+        ))
+        eventRepository.deleteAllEvents(eventNameStored.id!!)
+        val count = eventRepository.countEvents(eventNameStored.id!!)
+        assert(count == BigInteger.valueOf(0))
+        val countWrong = eventRepository.countEvents(wrongEeventNameStored.id!!)
+        assert(countWrong == BigInteger.valueOf(1))
+    }
 }
