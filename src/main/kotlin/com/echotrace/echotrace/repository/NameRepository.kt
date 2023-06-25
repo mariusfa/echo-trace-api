@@ -11,8 +11,9 @@ data class Name(
 @Repository
 class NameRepository(
     private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate
-) {
-    fun insert(name: Name) {
+) : NameRepositoryInterface {
+
+    override fun insert(name: Name) {
         val sql = """
             INSERT INTO echotraceschema.name (name)
             VALUES (:name)
@@ -26,7 +27,7 @@ class NameRepository(
         )
     }
 
-    fun getNames(): List<Name> {
+    override fun getNames(): List<Name> {
         val sql = """
             SELECT * FROM echotraceschema.name
         """.trimIndent()
@@ -41,7 +42,7 @@ class NameRepository(
         }
     }
 
-    fun getByName(name: String): Name? {
+    override fun getByName(name: String): Name? {
         val sql = """
             SELECT * FROM echotraceschema.name
             WHERE name = :name
@@ -60,7 +61,7 @@ class NameRepository(
         }.firstOrNull()
     }
 
-    fun update(nameUpdated: Name) {
+    override fun update(nameUpdated: Name) {
         val sql = """
             UPDATE echotraceschema.name
             SET name = :name
@@ -76,7 +77,7 @@ class NameRepository(
         )
     }
 
-    fun delete(id: Long) {
+    override fun delete(id: Long) {
         val sql = """
             DELETE FROM echotraceschema.name
             WHERE id = :id

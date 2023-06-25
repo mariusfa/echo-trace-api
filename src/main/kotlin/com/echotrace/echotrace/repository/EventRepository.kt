@@ -14,8 +14,9 @@ data class Event(
 @Repository
 class EventRepository(
     private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate
-) {
-    fun insert(event: Event) {
+) : EventRepositoryInterface {
+
+    override fun insert(event: Event) {
         val sql = """
             INSERT INTO echotraceschema.event (name_id, created_at)
             VALUES (:name_id, :created_at)
@@ -31,7 +32,7 @@ class EventRepository(
 
     }
 
-    fun count(nameId: Long): BigInteger {
+    override fun count(nameId: Long): BigInteger {
         val sql = """
             SELECT COUNT(*) FROM echotraceschema.event
             WHERE name_id = :name_id
@@ -46,7 +47,7 @@ class EventRepository(
         ) ?: BigInteger.ZERO
     }
 
-    fun deleteAllByNameId(nameId: Long) {
+    override fun deleteAllByNameId(nameId: Long) {
         val sql = """
             DELETE FROM echotraceschema.event
             WHERE name_id = :name_id

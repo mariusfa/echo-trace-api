@@ -1,12 +1,14 @@
 package com.echotrace.echotrace.service
 
+import com.echotrace.echotrace.repository.fakes.EventRepositoryFake
+import com.echotrace.echotrace.repository.fakes.NameRepositoryFake
 import org.junit.jupiter.api.Test
 
 class EventServiceTest {
 
     private val eventRepository = EventRepositoryFake()
-    private val eventNameRepository = EventNameRepositoryFake()
-    private val eventService = EventService(eventRepository, eventNameRepository)
+    private val nameRepository = NameRepositoryFake()
+    private val eventService = EventService(eventRepository, nameRepository)
 
     @Test
     fun `test insert first event also create eventName`() {
@@ -14,12 +16,17 @@ class EventServiceTest {
             name = "test event"
         )
 
-        eventService.insertEvent(eventRequest)
+        eventService.insert(eventRequest)
 
+        val nameStored = nameRepository.names[0]
+        assert(nameStored?.name == "test event")
+        assert(nameStored?.id != null)
+        assert(nameRepository.names.size == 1)
+
+        val eventStored = eventRepository.events[0]
+        assert(eventStored?.name?.id == nameStored?.id)
+        assert(eventStored?.createdAt != null)
+        assert(eventStored?.id != null)
         assert(eventRepository.events.size == 1)
-        assert(eventNameRepository.eventNames.size == 1)
-        assert(eventNameRepository.eventNames[0].name == "test event")
-        assert(eventRepository.events[0].eventName.id == eventNameRepository.eventNames[0].id)
-        assert(eventRepository.events[0].createdAt != null)
     }
 }
