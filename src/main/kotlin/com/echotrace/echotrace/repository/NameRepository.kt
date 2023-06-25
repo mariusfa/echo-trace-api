@@ -3,47 +3,47 @@ package com.echotrace.echotrace.repository
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
 
-data class EventName(
+data class Name(
     val id: Long?,
     val name: String,
 )
 
 @Repository
-class EventNameRepository(
+class NameRepository(
     private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate
 ) {
-    fun insertEventName(eventName: EventName) {
+    fun insert(name: Name) {
         val sql = """
-            INSERT INTO echotraceschema.eventnames (name)
+            INSERT INTO echotraceschema.name (name)
             VALUES (:name)
         """.trimIndent()
 
         namedParameterJdbcTemplate.update(
             sql,
             mapOf(
-                "name" to eventName.name
+                "name" to name.name
             )
         )
     }
 
-    fun getEventNames(): List<EventName> {
+    fun getNames(): List<Name> {
         val sql = """
-            SELECT * FROM echotraceschema.eventnames
+            SELECT * FROM echotraceschema.name
         """.trimIndent()
 
         return namedParameterJdbcTemplate.query(
             sql
         ) { rs, _ ->
-            EventName(
+            Name(
                 id = rs.getLong("id"),
                 name = rs.getString("name")
             )
         }
     }
 
-    fun getEventNameByName(name: String): EventName? {
+    fun getByName(name: String): Name? {
         val sql = """
-            SELECT * FROM echotraceschema.eventnames
+            SELECT * FROM echotraceschema.name
             WHERE name = :name
         """.trimIndent()
 
@@ -53,16 +53,16 @@ class EventNameRepository(
                 "name" to name
             )
         ) { rs, _ ->
-            EventName(
+            Name(
                 id = rs.getLong("id"),
                 name = rs.getString("name")
             )
         }.firstOrNull()
     }
 
-    fun updateEventName(eventNameUpdated: EventName) {
+    fun update(nameUpdated: Name) {
         val sql = """
-            UPDATE echotraceschema.eventnames
+            UPDATE echotraceschema.name
             SET name = :name
             WHERE id = :id
         """.trimIndent()
@@ -70,15 +70,15 @@ class EventNameRepository(
         namedParameterJdbcTemplate.update(
             sql,
             mapOf(
-                "id" to eventNameUpdated.id,
-                "name" to eventNameUpdated.name
+                "id" to nameUpdated.id,
+                "name" to nameUpdated.name
             )
         )
     }
 
-    fun deleteEventName(id: Long) {
+    fun delete(id: Long) {
         val sql = """
-            DELETE FROM echotraceschema.eventnames
+            DELETE FROM echotraceschema.name
             WHERE id = :id
         """.trimIndent()
 

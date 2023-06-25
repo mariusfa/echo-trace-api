@@ -7,7 +7,7 @@ import java.time.OffsetDateTime
 
 data class Event(
     val id: Long?,
-    val eventName: EventName,
+    val name: Name,
     val createdAt: OffsetDateTime,
 )
 
@@ -15,47 +15,47 @@ data class Event(
 class EventRepository(
     private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate
 ) {
-    fun insertEvent(event: Event) {
+    fun insert(event: Event) {
         val sql = """
-            INSERT INTO echotraceschema.events (eventname_id, created_at)
-            VALUES (:eventname_id, :created_at)
+            INSERT INTO echotraceschema.event (name_id, created_at)
+            VALUES (:name_id, :created_at)
         """.trimIndent()
 
         namedParameterJdbcTemplate.update(
             sql,
             mapOf(
-                "eventname_id" to event.eventName.id!!,
+                "name_id" to event.name.id!!,
                 "created_at" to event.createdAt
             )
         )
 
     }
 
-    fun countEvents(eventNameId: Long): BigInteger {
+    fun count(nameId: Long): BigInteger {
         val sql = """
-            SELECT COUNT(*) FROM echotraceschema.events
-            WHERE eventname_id = :eventname_id
+            SELECT COUNT(*) FROM echotraceschema.event
+            WHERE name_id = :name_id
         """.trimIndent()
 
         return namedParameterJdbcTemplate.queryForObject(
             sql,
             mapOf(
-                "eventname_id" to eventNameId
+                "name_id" to nameId
             ),
             BigInteger::class.java
         ) ?: BigInteger.ZERO
     }
 
-    fun deleteAllEvents(eventNameId: Long) {
+    fun deleteAllByNameId(nameId: Long) {
         val sql = """
-            DELETE FROM echotraceschema.events
-            WHERE eventname_id = :eventname_id
+            DELETE FROM echotraceschema.event
+            WHERE name_id = :name_id
         """.trimIndent()
 
         namedParameterJdbcTemplate.update(
             sql,
             mapOf(
-                "eventname_id" to eventNameId
+                "name_id" to nameId
             )
         )
     }
