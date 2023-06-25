@@ -50,4 +50,19 @@ class EventServiceTest {
         assert(eventStored?.id != null)
         assert(eventRepository.events.size == 2)
     }
+
+    @Test
+    fun `test get all summaries`() {
+        val eventRequest = EventRequest(
+            name = "test event"
+        )
+
+        eventService.insert(eventRequest)
+        eventService.insert(eventRequest)
+
+        val summaries = eventService.getAllSummaries()
+        assert(summaries.size == 1)
+        assert(summaries[0].name == "test event")
+        assert(summaries[0].count == 2)
+    }
 }
