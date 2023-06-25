@@ -43,7 +43,7 @@ class EventRepositoryTest(
             name = "test event"
         )
         nameRepository.insert(name)
-        val nameStored  = nameRepository.getByName("test event")!!
+        val nameStored = nameRepository.getByName("test event")!!
         val createdAt = OffsetDateTime.now()
         val event = Event(
             id = null,
