@@ -1,5 +1,6 @@
 package com.echotrace.echotrace.repository
 
+import org.springframework.context.annotation.Profile
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
 import java.math.BigInteger
@@ -12,6 +13,7 @@ data class Event(
 )
 
 @Repository
+@Profile("!test")
 class EventRepository(
     private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate
 ) : EventRepositoryInterface {

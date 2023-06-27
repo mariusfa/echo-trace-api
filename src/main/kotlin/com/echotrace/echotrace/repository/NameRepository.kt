@@ -1,5 +1,6 @@
 package com.echotrace.echotrace.repository
 
+import org.springframework.context.annotation.Profile
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
 
@@ -9,6 +10,7 @@ data class Name(
 )
 
 @Repository
+@Profile("!test")
 class NameRepository(
     private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate
 ) : NameRepositoryInterface {
