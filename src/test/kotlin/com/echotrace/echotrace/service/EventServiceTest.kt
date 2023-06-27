@@ -3,6 +3,7 @@ package com.echotrace.echotrace.service
 import com.echotrace.echotrace.repository.fakes.EventRepositoryFake
 import com.echotrace.echotrace.repository.fakes.NameRepositoryFake
 import org.junit.jupiter.api.Test
+import java.math.BigInteger
 
 class EventServiceTest {
 
@@ -59,10 +60,17 @@ class EventServiceTest {
 
         eventService.insert(eventRequest)
         eventService.insert(eventRequest)
+        eventService.insert(EventRequest("another event"))
 
         val summaries = eventService.getAllSummaries()
-        assert(summaries.size == 1)
+        assert(summaries.size == 2)
         assert(summaries[0].name == "test event")
-        assert(summaries[0].count == 2)
+        assert(summaries[0].count == BigInteger("2"))
+    }
+
+    @Test
+    fun `test get all summaries with no events`() {
+        val summaries = eventService.getAllSummaries()
+        assert(summaries.isEmpty())
     }
 }
