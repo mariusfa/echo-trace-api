@@ -32,6 +32,4 @@ class EventService(
         val names = nameRepository.getNames()
         return names.map { Summary(id = it.id!!, name = it.name, count = eventRepository.count(it.id)) }
     }
-
-
 }

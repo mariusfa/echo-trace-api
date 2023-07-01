@@ -2,7 +2,11 @@ package com.echotrace.echotrace.repository.fakes
 
 import com.echotrace.echotrace.repository.Name
 import com.echotrace.echotrace.repository.NameRepositoryInterface
+import org.springframework.context.annotation.Primary
+import org.springframework.stereotype.Repository
 
+@Repository
+@Primary
 class NameRepositoryFake() : NameRepositoryInterface {
 
     val names = mutableMapOf<Long, Name>()

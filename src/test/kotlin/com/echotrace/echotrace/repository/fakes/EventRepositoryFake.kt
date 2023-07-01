@@ -2,8 +2,12 @@ package com.echotrace.echotrace.repository.fakes
 
 import com.echotrace.echotrace.repository.Event
 import com.echotrace.echotrace.repository.EventRepositoryInterface
+import org.springframework.context.annotation.Primary
+import org.springframework.stereotype.Repository
 import java.math.BigInteger
 
+@Repository
+@Primary
 class EventRepositoryFake() : EventRepositoryInterface {
 
     val events = mutableMapOf<Long, Event>()
