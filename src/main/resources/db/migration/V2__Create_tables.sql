@@ -13,3 +13,17 @@ CREATE TABLE echotraceschema.event (
 );
 
 ALTER TABLE echotraceschema.event ADD CONSTRAINT fk_event_name_id FOREIGN KEY (name_id) REFERENCES echotraceschema.name(id);
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON echotraceschema.event TO appuser;
+GRANT USAGE, SELECT ON SEQUENCE echotraceschema.event_id_seq TO appuser;
+
+
+CREATE TABLE echotraceschema.user (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    hashed_password VARCHAR(255) NOT NULL,
+    api_token VARCHAR(255) NOT NULL UNIQUE
+);
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON echotraceschema.user TO appuser;
+GRANT USAGE, SELECT ON SEQUENCE echotraceschema.user_id_seq TO appuser;
