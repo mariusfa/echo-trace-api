@@ -26,4 +26,9 @@ class EventRepositoryFake() : EventRepositoryInterface {
     override fun deleteAllByNameId(nameId: Long) {
         events.remove(nameId)
     }
+
+    fun clear() {
+        events.clear()
+        id = 0L
+    }
 }

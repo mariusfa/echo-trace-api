@@ -28,4 +28,9 @@ class NameRepositoryFake() : NameRepositoryInterface {
     override fun delete(id: Long) {
         names.remove(id)
     }
+
+    fun clear() {
+        names.clear()
+        id = 0L
+    }
 }
