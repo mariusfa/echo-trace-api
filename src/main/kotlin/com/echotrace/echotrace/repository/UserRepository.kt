@@ -15,8 +15,9 @@ data class User(
 @Profile("!test")
 class UserRepository(
     private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate
-) {
-    fun insert(user: User) {
+) : UserRepositoryInterface {
+
+    override fun insert(user: User) {
         val sql = """
             INSERT INTO echotraceschema.user (name, hashed_password, api_token)
             VALUES (:name, :hashed_password, :api_token)
@@ -32,7 +33,7 @@ class UserRepository(
         )
     }
 
-    fun getByName(name: String): User? {
+    override fun getByName(name: String): User? {
         val sql = """
             SELECT * FROM echotraceschema.user
             WHERE name = :name
