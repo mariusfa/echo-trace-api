@@ -2,11 +2,7 @@ package com.echotrace.echotrace.controller
 
 import com.echotrace.echotrace.service.EventRequest
 import com.echotrace.echotrace.service.EventService
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.math.BigInteger
 
 data class EventRequestDTO(

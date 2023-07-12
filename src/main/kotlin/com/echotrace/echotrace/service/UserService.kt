@@ -10,7 +10,8 @@ import org.springframework.web.server.ResponseStatusException
 
 @Service
 class UserService(
-    private val userRepo: UserRepositoryInterface
+    private val userRepo: UserRepositoryInterface,
+    private val jwtService: JwtService
 ) {
     fun register(userRequest: UserRequest) {
         if (userRepo.getByName(userRequest.username) != null) throw ResponseStatusException(HttpStatus.CONFLICT, "User already exists")
@@ -33,5 +34,18 @@ class UserService(
     private fun hashPassword(password: String): String {
         val passwordEncoder = BCryptPasswordEncoder()
         return passwordEncoder.encode(password)
+    }
+
+    fun login(userRequest: UserRequest): String {
+        val user = userRepo.getByName(userRequest.username)
+        if (user == null || !BCryptPasswordEncoder().matches(userRequest.password, user.hashedPassword)) {
+            throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password")
+        }
+        return jwtService.getToken(user.name)
+    }
+
+    fun getApiToken(username: String): String {
+        val user = userRepo.getByName(username)!! // Should not be null if passed jwt filter
+        return user.apiToken
     }
 }
