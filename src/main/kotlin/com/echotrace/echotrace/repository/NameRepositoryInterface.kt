@@ -8,7 +8,7 @@ interface NameRepositoryInterface {
 
     fun insert(name: Name)
 
-    fun getNames(): List<Name>
+    fun getNames(user: User): List<Name>
 
     fun getByName(name: String): Name?
 

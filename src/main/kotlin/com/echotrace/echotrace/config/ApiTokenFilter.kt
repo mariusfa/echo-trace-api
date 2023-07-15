@@ -1,6 +1,5 @@
 package com.echotrace.echotrace.config
 
-import com.echotrace.echotrace.repository.UserRepository
 import com.echotrace.echotrace.repository.UserRepositoryInterface
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
@@ -21,7 +20,7 @@ class ApiTokenFilter(
         filterChain.doFilter(request, response)
     }
 
-    private fun validateHeader(header: String)  {
+    private fun validateHeader(header: String) {
         if (!validateAuth(header)) return
 
         val token = header.substring(4)

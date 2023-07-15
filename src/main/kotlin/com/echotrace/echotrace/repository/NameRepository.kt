@@ -31,13 +31,17 @@ class NameRepository(
         )
     }
 
-    override fun getNames(): List<Name> {
+    override fun getNames(user: User): List<Name> {
         val sql = """
             SELECT * FROM echotraceschema.name
+            WHERE user_id = :user_id
         """.trimIndent()
 
         return namedParameterJdbcTemplate.query(
-            sql
+            sql,
+            mapOf(
+                "user_id" to user.id
+            )
         ) { rs, _ ->
             Name(
                 id = rs.getLong("id"),

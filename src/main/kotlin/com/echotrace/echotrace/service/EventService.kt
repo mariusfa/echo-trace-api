@@ -26,8 +26,8 @@ class EventService(
 
     }
 
-    fun getAllSummaries(): List<Summary> {
-        val names = nameRepository.getNames()
+    fun getAllSummaries(user: User): List<Summary> {
+        val names = nameRepository.getNames(user)
         return names.map { Summary(id = it.id!!, name = it.name, count = eventRepository.count(it.id)) }
     }
 }

@@ -152,6 +152,43 @@ class EventIT(
     }
 
     @Test
+    fun `should not get summaries for other users`() {
+        val user = UserRequest("test user", "test password")
+        userService.register(user)
+        userService.register(user.copy(username = "other user"))
+        val otherUser = userRepositoryFake.getByName("other user")!!
+
+        nameRepositoryFake.insert(Name(
+            id = null,
+            name = "test event",
+            userId = otherUser.id!!
+        ))
+        val storedName = nameRepositoryFake.names[0]!!
+        eventRepositoryFake.insert(Event(
+            id = null,
+            name = storedName,
+            createdAt = OffsetDateTime.now()
+        ))
+
+        val token = userService.login(user)
+
+        mvc.get("/event") {
+            contentType = APPLICATION_JSON
+            header("Authorization", "Bearer $token")
+        }.andExpect {
+            status { isOk() }
+            content {
+                json(
+                    """
+                        []
+                    """.trimIndent()
+                )
+            }
+        }
+
+    }
+
+    @Test
     fun `should get forbidden when invalid token`() {
         val token = "invalid token"
         mvc.get("/event") {

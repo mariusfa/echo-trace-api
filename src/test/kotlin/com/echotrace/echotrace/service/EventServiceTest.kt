@@ -84,7 +84,7 @@ class EventServiceTest {
         eventService.insert(eventRequest)
         eventService.insert(EventRequest("another event", user))
 
-        val summaries = eventService.getAllSummaries()
+        val summaries = eventService.getAllSummaries(user)
         assert(summaries.size == 2)
         assert(summaries[0].name == "test event")
         assert(summaries[0].count == BigInteger("2"))
@@ -92,7 +92,13 @@ class EventServiceTest {
 
     @Test
     fun `test get all summaries with no events`() {
-        val summaries = eventService.getAllSummaries()
+        val user = User(
+            id = 1,
+            name = "test user",
+            hashedPassword = "test password",
+            apiToken = "test token"
+        )
+        val summaries = eventService.getAllSummaries(user)
         assert(summaries.isEmpty())
     }
 }

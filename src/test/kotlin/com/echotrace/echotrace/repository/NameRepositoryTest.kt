@@ -68,7 +68,7 @@ class NameRepositoryTest(
             userId = userStored.id!!
         )
         nameRepository.insert(name)
-        val names = nameRepository.getNames()
+        val names = nameRepository.getNames(userStored)
         assert(names.size == 1)
         assert(names[0].name == "test event")
     }

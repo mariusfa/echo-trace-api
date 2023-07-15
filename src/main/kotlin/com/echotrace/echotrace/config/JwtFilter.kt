@@ -20,7 +20,7 @@ class JwtFilter(
         filterChain.doFilter(request, response)
     }
 
-    private fun validateHeader(header: String)  {
+    private fun validateHeader(header: String) {
         if (!validateAuth(header)) return
 
         val token = header.substring(7)

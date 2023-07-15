@@ -2,6 +2,7 @@ package com.echotrace.echotrace.repository.fakes
 
 import com.echotrace.echotrace.repository.Name
 import com.echotrace.echotrace.repository.NameRepositoryInterface
+import com.echotrace.echotrace.repository.User
 import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Repository
 
@@ -17,7 +18,7 @@ class NameRepositoryFake() : NameRepositoryInterface {
         id++
     }
 
-    override fun getNames(): List<Name> = names.values.toList()
+    override fun getNames(user: User): List<Name> = names.values.toList().filter { it.userId == user.id }
 
     override fun getByName(name: String): Name? = names.values.firstOrNull { it.name == name }
 

@@ -32,6 +32,10 @@ class EventController(
     }
 
     @GetMapping()
-    fun getEvents(): List<SummaryDTO> = eventService.getAllSummaries().map { it.toDTO() }
+    fun getEvents(): List<SummaryDTO> {
+        val user = SecurityContextHolder.getContext().authentication.principal as User
+
+        return eventService.getAllSummaries(user).map { it.toDTO() }
+    }
 
 }
