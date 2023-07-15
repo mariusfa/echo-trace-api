@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository
 
 @Repository
 @Primary
-class UserRepositoryFake() : UserRepositoryInterface {
+class UserRepositoryFake : UserRepositoryInterface {
 
     val users = mutableListOf<User>()
     var id = 0L
@@ -17,9 +17,9 @@ class UserRepositoryFake() : UserRepositoryInterface {
         id++
     }
 
-    override fun getByName(name: String): User? {
-        return users.find { it.name == name }
-    }
+    override fun getByName(name: String): User? = users.find { it.name == name }
+
+    override fun findByApiToken(token: String): User? = users.find { it.apiToken == token }
 
     fun clear() {
         users.clear()

@@ -1,9 +1,6 @@
 package com.echotrace.echotrace.service
 
-import com.echotrace.echotrace.repository.Event
-import com.echotrace.echotrace.repository.EventRepositoryInterface
-import com.echotrace.echotrace.repository.Name
-import com.echotrace.echotrace.repository.NameRepositoryInterface
+import com.echotrace.echotrace.repository.*
 import com.echotrace.echotrace.service.domain.Summary
 import org.springframework.stereotype.Service
 import java.time.OffsetDateTime
@@ -11,6 +8,7 @@ import java.time.OffsetDateTime
 
 data class EventRequest(
     val name: String,
+    val user: User
 )
 
 @Service
@@ -20,7 +18,7 @@ class EventService(
 ) {
     fun insert(eventRequest: EventRequest) {
         if (nameRepository.getByName(eventRequest.name) == null) {
-            nameRepository.insert(Name(null, eventRequest.name))
+            nameRepository.insert(Name(null, eventRequest.name, eventRequest.user.id!!))
         }
 
         val name = nameRepository.getByName(eventRequest.name)!!

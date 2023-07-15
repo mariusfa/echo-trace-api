@@ -13,7 +13,7 @@ class NameRepositoryFake() : NameRepositoryInterface {
     var id = 0L
 
     override fun insert(name: Name) {
-        names[id] = Name(id, name.name)
+        names[id] = Name(id, name.name, name.userId)
         id++
     }
 

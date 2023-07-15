@@ -48,4 +48,6 @@ class UserService(
         val user = userRepo.getByName(username)!! // Should not be null if passed jwt filter
         return user.apiToken
     }
+
+    fun getRefreshedToken(name: String): String = jwtService.getToken(name)
 }

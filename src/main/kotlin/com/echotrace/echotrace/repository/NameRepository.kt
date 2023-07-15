@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository
 data class Name(
     val id: Long?,
     val name: String,
+    val userId: Long
 )
 
 @Repository
@@ -17,14 +18,15 @@ class NameRepository(
 
     override fun insert(name: Name) {
         val sql = """
-            INSERT INTO echotraceschema.name (name)
-            VALUES (:name)
+            INSERT INTO echotraceschema.name (name, user_id)
+            VALUES (:name, :user_id)
         """.trimIndent()
 
         namedParameterJdbcTemplate.update(
             sql,
             mapOf(
-                "name" to name.name
+                "name" to name.name,
+                "user_id" to name.userId
             )
         )
     }
@@ -39,7 +41,8 @@ class NameRepository(
         ) { rs, _ ->
             Name(
                 id = rs.getLong("id"),
-                name = rs.getString("name")
+                name = rs.getString("name"),
+                userId = rs.getLong("user_id")
             )
         }
     }
@@ -58,7 +61,8 @@ class NameRepository(
         ) { rs, _ ->
             Name(
                 id = rs.getLong("id"),
-                name = rs.getString("name")
+                name = rs.getString("name"),
+                userId = rs.getLong("user_id")
             )
         }.firstOrNull()
     }
@@ -74,7 +78,8 @@ class NameRepository(
             sql,
             mapOf(
                 "id" to nameUpdated.id,
-                "name" to nameUpdated.name
+                "name" to nameUpdated.name,
+                "user_id" to nameUpdated.userId
             )
         )
     }

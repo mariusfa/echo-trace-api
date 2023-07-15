@@ -1,5 +1,6 @@
 package com.echotrace.echotrace.service
 
+import com.echotrace.echotrace.repository.User
 import com.echotrace.echotrace.repository.fakes.EventRepositoryFake
 import com.echotrace.echotrace.repository.fakes.NameRepositoryFake
 import org.junit.jupiter.api.Test
@@ -13,8 +14,15 @@ class EventServiceTest {
 
     @Test
     fun `test insert first event also create eventName`() {
+        val user = User(
+            id = 1,
+            name = "test user",
+            hashedPassword = "test password",
+            apiToken = "test token"
+        )
         val eventRequest = EventRequest(
-            name = "test event"
+            name = "test event",
+            user = user
         )
 
         eventService.insert(eventRequest)
@@ -33,8 +41,15 @@ class EventServiceTest {
 
     @Test
     fun `test insert 2 events, only on creates a name`() {
+        val user = User(
+            id = 1,
+            name = "test user",
+            hashedPassword = "test password",
+            apiToken = "test token"
+        )
         val eventRequest = EventRequest(
-            name = "test event"
+            name = "test event",
+            user = user
         )
 
         eventService.insert(eventRequest)
@@ -54,13 +69,20 @@ class EventServiceTest {
 
     @Test
     fun `test get all summaries`() {
+        val user = User(
+            id = 1,
+            name = "test user",
+            hashedPassword = "test password",
+            apiToken = "test token"
+        )
         val eventRequest = EventRequest(
-            name = "test event"
+            name = "test event",
+            user = user
         )
 
         eventService.insert(eventRequest)
         eventService.insert(eventRequest)
-        eventService.insert(EventRequest("another event"))
+        eventService.insert(EventRequest("another event", user))
 
         val summaries = eventService.getAllSummaries()
         assert(summaries.size == 2)

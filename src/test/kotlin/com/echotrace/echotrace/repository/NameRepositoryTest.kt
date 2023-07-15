@@ -13,8 +13,10 @@ import org.springframework.test.context.ContextConfiguration
 @JdbcTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ContextConfiguration(classes = [EchotraceApplication::class])
-@Import(NameRepository::class)
+@Import(NameRepository::class, UserRepository::class)
 class NameRepositoryTest(
+    @Autowired
+    private val userRepository: UserRepository,
     @Autowired
     private val nameRepository: NameRepository,
     @Autowired
@@ -29,9 +31,19 @@ class NameRepositoryTest(
     @Test
     fun `test insert name`() {
         flyway.migrate()
+        val user = User(
+            id = null,
+            name = "test user",
+            hashedPassword = "test hash password",
+            apiToken = "test api token"
+        )
+        userRepository.insert(user)
+        val userStored = userRepository.getByName(user.name)!!
+
         val name = Name(
             id = null,
-            name = "test event"
+            name = "test event",
+            userId = userStored.id!!
         )
         nameRepository.insert(name)
         val namesRaw = jdbcTemplate.queryForList("SELECT * FROM echotraceschema.name")
@@ -41,9 +53,19 @@ class NameRepositoryTest(
     @Test
     fun `test get names`() {
         flyway.migrate()
+        val user = User(
+            id = null,
+            name = "test user",
+            hashedPassword = "test hash password",
+            apiToken = "test api token"
+        )
+        userRepository.insert(user)
+        val userStored = userRepository.getByName(user.name)!!
+
         val name = Name(
             id = null,
-            name = "test event"
+            name = "test event",
+            userId = userStored.id!!
         )
         nameRepository.insert(name)
         val names = nameRepository.getNames()
@@ -54,9 +76,19 @@ class NameRepositoryTest(
     @Test
     fun `test get by name`() {
         flyway.migrate()
+        val user = User(
+            id = null,
+            name = "test user",
+            hashedPassword = "test hash password",
+            apiToken = "test api token"
+        )
+        userRepository.insert(user)
+        val userStored = userRepository.getByName(user.name)!!
+
         val name = Name(
             id = null,
-            name = "test event"
+            name = "test event",
+            userId = userStored.id!!
         )
         nameRepository.insert(name)
         val nameFound = nameRepository.getByName(name.name)
@@ -67,16 +99,26 @@ class NameRepositoryTest(
     @Test
     fun `test update name`() {
         flyway.migrate()
+        val user = User(
+            id = null,
+            name = "test user",
+            hashedPassword = "test hash password",
+            apiToken = "test api token"
+        )
+        userRepository.insert(user)
+        val userStored = userRepository.getByName(user.name)!!
         val name = Name(
             id = null,
-            name = "test event"
+            name = "test event",
+            userId = userStored.id!!
         )
         nameRepository.insert(name)
         val nameFound = nameRepository.getByName(name.name)
 
         val nameUpdated = Name(
             id = nameFound?.id,
-            name = "test event updated"
+            name = "test event updated",
+            userId = userStored.id!!
         )
         nameRepository.update(nameUpdated)
         val nameFoundUpdated = nameRepository.getByName(nameUpdated.name)
@@ -87,9 +129,18 @@ class NameRepositoryTest(
     @Test
     fun `test delete name`() {
         flyway.migrate()
+        val user = User(
+            id = null,
+            name = "test user",
+            hashedPassword = "test hash password",
+            apiToken = "test api token"
+        )
+        userRepository.insert(user)
+        val userStored = userRepository.getByName(user.name)!!
         val name = Name(
             id = null,
-            name = "test event"
+            name = "test event",
+            userId = userStored.id!!
         )
         nameRepository.insert(name)
         val nameFound = nameRepository.getByName(name.name)

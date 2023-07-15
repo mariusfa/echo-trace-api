@@ -18,12 +18,14 @@ import java.time.ZoneOffset
 @JdbcTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ContextConfiguration(classes = [EchotraceApplication::class])
-@Import(NameRepository::class, EventRepository::class)
+@Import(NameRepository::class, EventRepository::class, UserRepository::class)
 class EventRepositoryTest(
     @Autowired
     private val nameRepository: NameRepository,
     @Autowired
     private val eventRepository: EventRepository,
+    @Autowired
+    private val userRepository: UserRepository,
     @Autowired
     private val flyway: Flyway,
     @Autowired
@@ -38,9 +40,18 @@ class EventRepositoryTest(
     @Test
     fun `test insert event`() {
         flyway.migrate()
+        val user = User(
+            id = null,
+            name = "test user",
+            hashedPassword = "test hash password",
+            apiToken = "test api token"
+        )
+        userRepository.insert(user)
+        val userStored = userRepository.getByName(user.name)!!
         val name = Name(
             id = null,
-            name = "test event"
+            name = "test event",
+            userId = userStored.id!!
         )
         nameRepository.insert(name)
         val nameStored = nameRepository.getByName("test event")!!
@@ -70,9 +81,18 @@ class EventRepositoryTest(
     @Test
     fun `test count events for given name`() {
         flyway.migrate()
+        val user = User(
+            id = null,
+            name = "test user",
+            hashedPassword = "test hash password",
+            apiToken = "test api token"
+        )
+        userRepository.insert(user)
+        val userStored = userRepository.getByName(user.name)!!
         val name = Name(
             id = null,
-            name = "test event"
+            name = "test event",
+            userId = userStored.id!!
         )
         nameRepository.insert(name)
         val nameStored = nameRepository.getByName("test event")!!
@@ -94,13 +114,23 @@ class EventRepositoryTest(
     @Test
     fun `test count events when not correct name`() {
         flyway.migrate()
+        val user = User(
+            id = null,
+            name = "test user",
+            hashedPassword = "test hash password",
+            apiToken = "test api token"
+        )
+        userRepository.insert(user)
+        val userStored = userRepository.getByName(user.name)!!
         val name = Name(
             id = null,
-            name = "test event"
+            name = "test event",
+            userId = userStored.id!!
         )
         val wrongName = Name(
             id = null,
-            name = "wrong event"
+            name = "wrong event",
+            userId = userStored.id!!
         )
         nameRepository.insert(name)
         nameRepository.insert(wrongName)
@@ -124,9 +154,18 @@ class EventRepositoryTest(
     @Test
     fun `delete all events given name id`() {
         flyway.migrate()
+        val user = User(
+            id = null,
+            name = "test user",
+            hashedPassword = "test hash password",
+            apiToken = "test api token"
+        )
+        userRepository.insert(user)
+        val userStored = userRepository.getByName(user.name)!!
         val name = Name(
             id = null,
-            name = "test event"
+            name = "test event",
+            userId = userStored.id!!
         )
         nameRepository.insert(name)
         val nameStored = nameRepository.getByName("test event")!!
@@ -149,13 +188,23 @@ class EventRepositoryTest(
     @Test
     fun `delete all events given name id and ignore other events`() {
         flyway.migrate()
+        val user = User(
+            id = null,
+            name = "test user",
+            hashedPassword = "test hash password",
+            apiToken = "test api token"
+        )
+        userRepository.insert(user)
+        val userStored = userRepository.getByName(user.name)!!
         val name = Name(
             id = null,
-            name = "test event"
+            name = "test event",
+            userId = userStored.id!!
         )
         val wrongName = Name(
             id = null,
-            name = "wrong event"
+            name = "wrong event",
+            userId = userStored.id!!
         )
         nameRepository.insert(name)
         nameRepository.insert(wrongName)

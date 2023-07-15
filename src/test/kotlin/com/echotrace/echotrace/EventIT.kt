@@ -4,6 +4,9 @@ import com.echotrace.echotrace.repository.Event
 import com.echotrace.echotrace.repository.Name
 import com.echotrace.echotrace.repository.fakes.EventRepositoryFake
 import com.echotrace.echotrace.repository.fakes.NameRepositoryFake
+import com.echotrace.echotrace.repository.fakes.UserRepositoryFake
+import com.echotrace.echotrace.service.UserService
+import com.echotrace.echotrace.service.domain.UserRequest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -25,17 +28,27 @@ class EventIT(
     @Autowired
     private val nameRepositoryFake: NameRepositoryFake,
     @Autowired
-    private val eventRepositoryFake: EventRepositoryFake
+    private val eventRepositoryFake: EventRepositoryFake,
+    @Autowired
+    private val userRepositoryFake: UserRepositoryFake,
+    @Autowired
+    private val userService: UserService
+
 ) {
 
     @BeforeEach
     fun setup() {
         nameRepositoryFake.clear()
         eventRepositoryFake.clear()
+        userRepositoryFake.clear()
     }
 
     @Test
     fun `should post event`() {
+        val user = UserRequest("test user", "test password")
+        userService.register(user)
+        val apiToken = userRepositoryFake.users[0]?.apiToken
+
         mvc.post("/event") {
             contentType = APPLICATION_JSON
             content = """
@@ -43,6 +56,7 @@ class EventIT(
                     "name": "test event"
                 }
             """.trimIndent()
+            header("Authorization", "Api $apiToken")
         }.andExpect {
             status { isOk() }
         }
@@ -50,6 +64,7 @@ class EventIT(
         val nameStored = nameRepositoryFake.names[0]
         assert(nameStored?.name == "test event")
         assert(nameStored?.id != null)
+        assert(nameStored?.userId != null)
         assert(nameRepositoryFake.names.size == 1)
 
         val eventStored = eventRepositoryFake.events[0]
@@ -60,10 +75,33 @@ class EventIT(
     }
 
     @Test
+    fun `should not be able to post event`() {
+        val apiToken = "invalid token"
+        mvc.post("/event") {
+            contentType = APPLICATION_JSON
+            content = """
+                {
+                    "name": "test event"
+                }
+            """.trimIndent()
+            header("Authorization", "Api $apiToken")
+        }.andExpect {
+            status { isForbidden() }
+        }
+
+    }
+
+    @Test
     fun `should get summaries`() {
+        val user = UserRequest("test user", "test password")
+        userService.register(user)
+        val token = userService.login(user)
+        val userId = userRepositoryFake.users[0]?.id
+
         nameRepositoryFake.insert(Name(
             id = null,
-            name = "test event"
+            name = "test event",
+            userId = userId!!
         ))
         val storedName = nameRepositoryFake.names[0]!!
         eventRepositoryFake.insert(Event(
@@ -74,6 +112,7 @@ class EventIT(
 
         mvc.get("/event") {
             contentType = APPLICATION_JSON
+            header("Authorization", "Bearer $token")
         }.andExpect {
             status { isOk() }
             content {
@@ -93,8 +132,13 @@ class EventIT(
 
     @Test
     fun `should get empty array summary when no events`() {
+        val user = UserRequest("test user", "test password")
+        userService.register(user)
+        val token = userService.login(user)
+
         mvc.get("/event") {
             contentType = APPLICATION_JSON
+            header("Authorization", "Bearer $token")
         }.andExpect {
             status { isOk() }
             content {
@@ -105,5 +149,17 @@ class EventIT(
                 )
             }
         }
+    }
+
+    @Test
+    fun `should get forbidden when invalid token`() {
+        val token = "invalid token"
+        mvc.get("/event") {
+            contentType = APPLICATION_JSON
+            header("Authorization", "Bearer $token")
+        }.andExpect {
+            status { isForbidden() }
+        }
+
     }
 }

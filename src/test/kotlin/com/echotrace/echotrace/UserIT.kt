@@ -1,7 +1,11 @@
 package com.echotrace.echotrace
 
 import com.echotrace.echotrace.repository.fakes.UserRepositoryFake
+import com.echotrace.echotrace.service.UserService
+import com.echotrace.echotrace.service.domain.UserRequest
 import com.jayway.jsonpath.JsonPath
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -20,8 +24,16 @@ class UserIT(
     @Autowired
     private val mvc: MockMvc,
     @Autowired
-    private val userRepositoryFake: UserRepositoryFake
+    private val userRepositoryFake: UserRepositoryFake,
+    @Autowired
+    private val userService: UserService
+
 ) {
+
+    @BeforeEach
+    fun setup() {
+        userRepositoryFake.clear()
+    }
 
     @Test
     fun `should test register user`() {
@@ -45,17 +57,9 @@ class UserIT(
 
     @Test
     fun `should test login user`() {
-        mvc.post("/user/register") {
-            contentType = APPLICATION_JSON
-            content = """
-                {
-                    "username": "test user",
-                    "password": "test password"
-                }
-            """.trimIndent()
-        }.andExpect {
-            status { isOk() }
-        }
+        val userRequest = UserRequest("test user", "test password")
+        userService.register(userRequest)
+
         mvc.post("/user/login") {
             contentType = APPLICATION_JSON
             content = """
@@ -72,31 +76,9 @@ class UserIT(
 
     @Test
     fun `should test get api token`() {
-        mvc.post("/user/register") {
-            contentType = APPLICATION_JSON
-            content = """
-                {
-                    "username": "test user",
-                    "password": "test password"
-                }
-            """.trimIndent()
-        }.andExpect {
-            status { isOk() }
-        }
-
-        val response = mvc.post("/user/login") {
-            contentType = APPLICATION_JSON
-            content = """
-                {
-                    "username": "test user",
-                    "password": "test password"
-                }
-            """.trimIndent()
-        }.andExpect {
-            status { isOk() }
-            jsonPath("$.token") { exists() }
-        }.andReturn().response.contentAsString
-        val token = JsonPath.read<String>(response, "$.token")
+        val userRequest = UserRequest("test user2", "test password")
+        userService.register(userRequest)
+        val token = userService.login(userRequest)
 
         mvc.get("/user/api-token") {
             contentType = APPLICATION_JSON
@@ -104,6 +86,31 @@ class UserIT(
         }.andExpect {
             status { isOk() }
             jsonPath("$.token") { exists() }
+        }
+    }
+
+    @Test
+    fun `should refresh token`() {
+        val userRequest = UserRequest("test user", "test password")
+        userService.register(userRequest)
+        val token = userService.login(userRequest)
+
+        mvc.get("/user/refresh") {
+            contentType = APPLICATION_JSON
+            header("Authorization", "Bearer $token")
+        }.andExpect {
+            status { isOk() }
+            jsonPath("$.token") { exists() }
+        }
+    }
+
+    @Test
+    fun `should not get refresh token`() {
+        mvc.get("/user/refresh") {
+            contentType = APPLICATION_JSON
+            header("Authorization", "Bearer invalid token")
+        }.andExpect {
+            status { isForbidden() }
         }
     }
 }

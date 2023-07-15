@@ -53,4 +53,25 @@ class UserRepository(
             )
         }.firstOrNull()
     }
+
+    override fun findByApiToken(token: String): User? {
+        val sql = """
+            SELECT * FROM echotraceschema.user
+            WHERE api_token = :api_token
+        """.trimIndent()
+
+        return namedParameterJdbcTemplate.query(
+            sql,
+            mapOf(
+                "api_token" to token
+            )
+        ) { rs, _ ->
+            User(
+                id = rs.getLong("id"),
+                name = rs.getString("name"),
+                hashedPassword = rs.getString("hashed_password"),
+                apiToken = rs.getString("api_token")
+            )
+        }.firstOrNull()
+    }
 }
