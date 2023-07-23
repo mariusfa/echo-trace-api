@@ -13,7 +13,7 @@ class EchoTraceConfig {
         return object : WebMvcConfigurer {
             override fun addCorsMappings(registry: CorsRegistry) {
                 registry.addMapping("/**")
-                    .allowedOrigins("http://localhost:5173", "mydomain-tbd.com")
+                    .allowedOrigins("*")
                     .allowedMethods("*")
             }
         }
