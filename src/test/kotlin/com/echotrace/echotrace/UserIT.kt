@@ -95,7 +95,7 @@ class UserIT(
         userService.register(userRequest)
         val token = userService.login(userRequest)
 
-        mvc.get("/user/refresh") {
+        mvc.get("/user/validate") {
             contentType = APPLICATION_JSON
             header("Authorization", "Bearer $token")
         }.andExpect {

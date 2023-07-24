@@ -28,7 +28,7 @@ class SecurityConfig(
             .csrf { it.disable() }
             .authorizeHttpRequests {
                 it.requestMatchers("/user/api-token").authenticated()
-                it.requestMatchers("/user/refresh").authenticated()
+                it.requestMatchers("/user/validate").authenticated()
                 it.requestMatchers(HttpMethod.GET, "/event").authenticated()
                 it.anyRequest().permitAll()
             }

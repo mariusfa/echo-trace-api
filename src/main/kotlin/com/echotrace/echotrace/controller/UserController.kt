@@ -35,7 +35,7 @@ class UserController(
         return TokenDTO(userService.getApiToken(user.name))
     }
 
-    @GetMapping("/refresh")
+    @GetMapping("/validate")
     fun refresh(): TokenDTO {
         val user = SecurityContextHolder.getContext().authentication.principal as User
         return TokenDTO(userService.getRefreshedToken(user.name))
