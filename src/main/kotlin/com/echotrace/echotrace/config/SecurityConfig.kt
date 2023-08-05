@@ -10,6 +10,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.web.util.matcher.RequestMatcher
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.CorsConfigurationSource
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
 @Configuration
 @EnableWebSecurity
@@ -18,9 +21,10 @@ class SecurityConfig(
     private val userRepository: UserRepositoryInterface
 ) {
 
+
     @Bean
     fun jwtFilterChain(http: HttpSecurity): SecurityFilterChain {
-        http
+        http.cors {}
             .securityMatcher(RequestMatcher { request ->
                 val path = request.requestURI
                 path.startsWith("/user") || (path.startsWith("/event") && request.method == "GET")
@@ -37,9 +41,10 @@ class SecurityConfig(
         return http.build()
     }
 
+
     @Bean
     fun apiTokenFilterChain(http: HttpSecurity): SecurityFilterChain {
-        http
+        http.cors {}
             .securityMatcher(RequestMatcher { request ->
                 val path = request.requestURI
                 path.startsWith("/event") && request.method == "POST"
@@ -52,5 +57,16 @@ class SecurityConfig(
             .addFilterBefore(ApiTokenFilter(userRepository), UsernamePasswordAuthenticationFilter::class.java)
 
         return http.build()
+    }
+
+    @Bean
+    fun corsConfigurationSource(): CorsConfigurationSource {
+        val configuration = CorsConfiguration()
+        configuration.allowedOrigins = listOf("http://localhost:5173")
+        configuration.allowedMethods = listOf("GET", "POST")
+        configuration.allowedHeaders = listOf("*")
+        val source = UrlBasedCorsConfigurationSource()
+        source.registerCorsConfiguration("/**", configuration)
+        return source
     }
 }

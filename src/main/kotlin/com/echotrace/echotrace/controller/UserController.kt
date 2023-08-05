@@ -36,6 +36,7 @@ class UserController(
     }
 
     @GetMapping("/validate")
+    @CrossOrigin(origins = ["http://localhost:5173"])
     fun refresh(): TokenDTO {
         val user = SecurityContextHolder.getContext().authentication.principal as User
         return TokenDTO(userService.getRefreshedToken(user.name))

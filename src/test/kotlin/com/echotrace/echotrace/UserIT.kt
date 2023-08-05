@@ -106,7 +106,7 @@ class UserIT(
 
     @Test
     fun `should not get refresh token`() {
-        mvc.get("/user/refresh") {
+        mvc.get("/user/validate") {
             contentType = APPLICATION_JSON
             header("Authorization", "Bearer invalid token")
         }.andExpect {

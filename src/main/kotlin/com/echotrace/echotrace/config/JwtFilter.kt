@@ -17,6 +17,7 @@ class JwtFilter(
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
         val authHeader = request.getHeader("Authorization") ?: ""
         validateHeader(authHeader)
+        response.setHeader("Access-Control-Allow-Origin", "*")
         filterChain.doFilter(request, response)
     }
 
