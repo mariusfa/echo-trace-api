@@ -4,7 +4,6 @@ import com.echotrace.echotrace.repository.UserRepositoryInterface
 import com.echotrace.echotrace.service.JwtService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.web.SecurityFilterChain
@@ -27,13 +26,13 @@ class SecurityConfig(
         http.cors {}
             .securityMatcher(RequestMatcher { request ->
                 val path = request.requestURI
-                path.startsWith("/user") || (path.startsWith("/event") && request.method == "GET")
+                path.startsWith("/user") || (path.startsWith("/event") && (request.method == "GET" || request.method == "OPTIONS"))
             })
             .csrf { it.disable() }
             .authorizeHttpRequests {
                 it.requestMatchers("/user/api-token").authenticated()
                 it.requestMatchers("/user/validate").authenticated()
-                it.requestMatchers(HttpMethod.GET, "/event").authenticated()
+                it.requestMatchers("/event").authenticated()
                 it.anyRequest().permitAll()
             }
             .addFilterBefore(JwtFilter(jwtService), UsernamePasswordAuthenticationFilter::class.java)
@@ -47,11 +46,11 @@ class SecurityConfig(
         http.cors {}
             .securityMatcher(RequestMatcher { request ->
                 val path = request.requestURI
-                path.startsWith("/event") && request.method == "POST"
+                path.startsWith("/event") && (request.method == "POST" || request.method == "OPTIONS")
             })
             .csrf { it.disable() }
             .authorizeHttpRequests {
-                it.requestMatchers(HttpMethod.POST, "/event").authenticated()
+                it.requestMatchers("/event").authenticated()
                 it.anyRequest().permitAll()
             }
             .addFilterBefore(ApiTokenFilter(userRepository), UsernamePasswordAuthenticationFilter::class.java)
@@ -62,9 +61,10 @@ class SecurityConfig(
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration()
-        configuration.allowedOrigins = listOf("http://localhost:5173")
-        configuration.allowedMethods = listOf("GET", "POST")
-        configuration.allowedHeaders = listOf("*")
+        configuration.applyPermitDefaultValues()
+//        configuration.allowedOrigins = listOf("http://localhost:5173")
+//        configuration.allowedMethods = listOf("GET", "POST")
+//        configuration.allowedHeaders = listOf("*")
         val source = UrlBasedCorsConfigurationSource()
         source.registerCorsConfiguration("/**", configuration)
         return source
