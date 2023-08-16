@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import java.time.OffsetDateTime
@@ -185,7 +186,39 @@ class EventIT(
                 )
             }
         }
+    }
 
+    @Test
+    fun `should delete events based on name id`() {
+        val user = UserRequest("test user", "test password")
+        userService.register(user)
+        val token = userService.login(user)
+        val userId = userRepositoryFake.users[0]?.id
+        nameRepositoryFake.insert(Name(
+            id = null,
+            name = "test event",
+            userId = userId!!
+        ))
+        nameRepositoryFake.insert(Name(
+            id = null,
+            name = "other event",
+            userId = userId
+        ))
+        val storedName = nameRepositoryFake.names[0]!!
+        eventRepositoryFake.insert(Event(
+            id = null,
+            name = storedName,
+            createdAt = OffsetDateTime.now()
+        ))
+
+        mvc.delete("/event/${storedName.id}") {
+            header("Authorization", "Bearer $token")
+        }.andExpect {
+            status { isOk() }
+        }
+
+        assert(nameRepositoryFake.names.size == 1)
+        assert(eventRepositoryFake.events.size == 0)
     }
 
     @Test
