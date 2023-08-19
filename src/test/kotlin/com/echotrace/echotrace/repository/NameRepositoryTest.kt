@@ -114,7 +114,7 @@ class NameRepositoryTest(
             userId = userStored.id!!
         )
         nameRepository.insert(name)
-        val nameFound = nameRepository.getById(1, userStored)
+        val nameFound = nameRepository.getById(2, userStored)
         assert(nameFound != null)
         assert((nameFound?.name ?: "") == name.name)
     }
