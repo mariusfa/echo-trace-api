@@ -11,5 +11,7 @@ interface EventRepositoryInterface {
 
     fun count(nameId: Long): BigInteger
 
+    fun getCountEachDay(nameId: Long, numOfDays: Int): List<BigInteger>
+
     fun deleteAllByNameId(nameId: Long)
 }

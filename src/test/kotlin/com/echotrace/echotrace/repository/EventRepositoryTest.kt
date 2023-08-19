@@ -186,6 +186,49 @@ class EventRepositoryTest(
     }
 
     @Test
+    fun `get count each day`() {
+        flyway.migrate()
+        val user = User(
+            id = null,
+            name = "test user",
+            hashedPassword = "test hash password",
+            apiToken = "test api token"
+        )
+        userRepository.insert(user)
+        val userStored = userRepository.getByName(user.name)!!
+        val name = Name(
+            id = null,
+            name = "test event",
+            userId = userStored.id!!
+        )
+        nameRepository.insert(name)
+        val nameStored = nameRepository.getByName("test event")!!
+        val event = Event(
+            id = null,
+            name = nameStored,
+            createdAt = OffsetDateTime.now(),
+        )
+        eventRepository.insert(event.copy(createdAt = OffsetDateTime.now().minusDays(1)))
+        eventRepository.insert(event.copy(createdAt = OffsetDateTime.now().minusDays(1)))
+        eventRepository.insert(event.copy(createdAt = OffsetDateTime.now().minusDays(2)))
+        eventRepository.insert(event.copy(createdAt = OffsetDateTime.now().minusDays(2)))
+        eventRepository.insert(event.copy(createdAt = OffsetDateTime.now().minusDays(2)))
+        eventRepository.insert(event.copy(createdAt = OffsetDateTime.now().minusDays(3)))
+        eventRepository.insert(event.copy(createdAt = OffsetDateTime.now().minusDays(3)))
+        eventRepository.insert(event.copy(createdAt = OffsetDateTime.now().minusDays(3)))
+        eventRepository.insert(event.copy(createdAt = OffsetDateTime.now().minusDays(3)))
+
+        val numOfDays = 10
+        val listOfCounts = eventRepository.getCountEachDay(nameStored.id!!, numOfDays)
+
+        assert(listOfCounts.size == numOfDays)
+        assert(listOfCounts[0] == BigInteger.valueOf(0))
+        assert(listOfCounts[1] == BigInteger.valueOf(2))
+        assert(listOfCounts[2] == BigInteger.valueOf(3))
+        assert(listOfCounts[3] == BigInteger.valueOf(4))
+    }
+
+    @Test
     fun `delete all events given name id and ignore other events`() {
         flyway.migrate()
         val user = User(

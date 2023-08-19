@@ -19,6 +19,12 @@ data class SummaryDTO(
     val count: BigInteger
 )
 
+data class EventDetailsDTO(
+    val id: Long,
+    val name: String,
+    val dayCount: List<BigInteger>
+)
+
 @RestController
 @RequestMapping("/event")
 class EventController(
@@ -34,8 +40,12 @@ class EventController(
     @GetMapping()
     fun getEvents(): List<SummaryDTO> {
         val user = SecurityContextHolder.getContext().authentication.principal as User
-
         return eventService.getAllSummaries(user).map { it.toDTO() }
     }
 
+    @GetMapping("/{id}")
+    fun getEventDetails(@PathVariable id: Long): EventDetailsDTO {
+        val user = SecurityContextHolder.getContext().authentication.principal as User
+        return eventService.getDetails(id, user).toDTO()
+    }
 }

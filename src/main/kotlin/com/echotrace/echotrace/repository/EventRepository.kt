@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Profile
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
 import java.math.BigInteger
+import java.time.LocalDate
 import java.time.OffsetDateTime
 
 data class Event(
@@ -48,6 +49,36 @@ class EventRepository(
             BigInteger::class.java
         ) ?: BigInteger.ZERO
     }
+
+    override fun getCountEachDay(nameId: Long, numOfDays: Int): List<BigInteger> {
+        val sql = """
+            SELECT DATE(created_at) as event_date, COUNT(*) as event_count 
+            FROM echotraceschema.event
+            WHERE name_id = :name_id
+            AND created_at >= CURRENT_DATE - :num_of_days
+            GROUP BY DATE(created_at)
+            ORDER BY DATE(created_at) DESC
+            LIMIT :num_of_days
+        """.trimIndent()
+
+
+        val counts = namedParameterJdbcTemplate.query(
+            sql,
+            mapOf(
+                "name_id" to nameId,
+                "num_of_days" to numOfDays
+            )
+        ) { rs, _ ->
+            Pair(rs.getDate("event_date").toLocalDate(), rs.getBigDecimal("event_count").toBigInteger())
+        }.toMap()
+
+        return (0 until numOfDays).map { dayOffset ->
+            val day = LocalDate.now().minusDays(dayOffset.toLong())
+            counts[day] ?: BigInteger.ZERO
+        }
+
+    }
+
 
     override fun deleteAllByNameId(nameId: Long) {
         val sql = """

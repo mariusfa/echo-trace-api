@@ -71,6 +71,28 @@ class NameRepository(
         }.firstOrNull()
     }
 
+    override fun getById(id: Long, user: User): Name? {
+        val sql = """
+            SELECT * FROM echotraceschema.name
+            WHERE id = :id
+            AND user_id = :user_id
+        """.trimIndent()
+
+        return namedParameterJdbcTemplate.query(
+            sql,
+            mapOf(
+                "id" to id,
+                "user_id" to user.id
+            )
+        ) { rs, _ ->
+            Name(
+                id = rs.getLong("id"),
+                name = rs.getString("name"),
+                userId = rs.getLong("user_id")
+            )
+        }.firstOrNull()
+    }
+
     override fun update(nameUpdated: Name) {
         val sql = """
             UPDATE echotraceschema.name

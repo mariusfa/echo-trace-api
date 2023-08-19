@@ -88,7 +88,6 @@ class EventIT(
         }.andExpect {
             status { isForbidden() }
         }
-
     }
 
     @Test
@@ -196,6 +195,49 @@ class EventIT(
             header("Authorization", "Bearer $token")
         }.andExpect {
             status { isForbidden() }
+        }
+
+    }
+
+    @Test
+    fun `should get event details with count for last 30 days`() {
+        val user = UserRequest("test user", "test password")
+        userService.register(user)
+        val token = userService.login(user)
+        val userId = userRepositoryFake.users[0]?.id
+
+        nameRepositoryFake.insert(Name(
+            id = null,
+            name = "test event",
+            userId = userId!!
+        ))
+        val storedName = nameRepositoryFake.names[0]!!
+        val event = Event(
+            id = null,
+            name = storedName,
+            createdAt = OffsetDateTime.now()
+        )
+        eventRepositoryFake.insert(event.copy(createdAt = OffsetDateTime.now().minusDays(1)))
+        eventRepositoryFake.insert(event.copy(createdAt = OffsetDateTime.now().minusDays(1)))
+        eventRepositoryFake.insert(event.copy(createdAt = OffsetDateTime.now().minusDays(2)))
+        eventRepositoryFake.insert(event.copy(createdAt = OffsetDateTime.now().minusDays(2)))
+        eventRepositoryFake.insert(event.copy(createdAt = OffsetDateTime.now().minusDays(2)))
+        eventRepositoryFake.insert(event.copy(createdAt = OffsetDateTime.now().minusDays(3)))
+        eventRepositoryFake.insert(event.copy(createdAt = OffsetDateTime.now().minusDays(3)))
+        eventRepositoryFake.insert(event.copy(createdAt = OffsetDateTime.now().minusDays(3)))
+        eventRepositoryFake.insert(event.copy(createdAt = OffsetDateTime.now().minusDays(3)))
+
+        mvc.get("/event/${storedName.id}") {
+            contentType = APPLICATION_JSON
+            header("Authorization", "Bearer $token")
+        }.andExpect {
+            status { isOk() }
+            jsonPath("$.name") { value("test event") }
+            jsonPath("$.dayCount[0]") { value(0) }
+            jsonPath("$.dayCount[1]") { value(2) }
+            jsonPath("$.dayCount[2]") { value(3) }
+            jsonPath("$.dayCount[3]") { value(4) }
+            jsonPath("$.dayCount[5]") { value(0) }
         }
 
     }

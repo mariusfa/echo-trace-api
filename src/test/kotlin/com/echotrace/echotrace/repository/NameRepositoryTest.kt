@@ -97,6 +97,29 @@ class NameRepositoryTest(
     }
 
     @Test
+    fun `test get by id`() {
+        flyway.migrate()
+        val user = User(
+            id = null,
+            name = "test user",
+            hashedPassword = "test hash password",
+            apiToken = "test api token"
+        )
+        userRepository.insert(user)
+        val userStored = userRepository.getByName(user.name)!!
+
+        val name = Name(
+            id = null,
+            name = "test event",
+            userId = userStored.id!!
+        )
+        nameRepository.insert(name)
+        val nameFound = nameRepository.getById(1, userStored)
+        assert(nameFound != null)
+        assert((nameFound?.name ?: "") == name.name)
+    }
+
+    @Test
     fun `test update name`() {
         flyway.migrate()
         val user = User(

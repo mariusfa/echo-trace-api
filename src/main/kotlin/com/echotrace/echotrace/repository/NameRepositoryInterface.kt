@@ -12,6 +12,8 @@ interface NameRepositoryInterface {
 
     fun getByName(name: String): Name?
 
+    fun getById(id: Long, user: User): Name?
+
     fun update(name: Name)
 
     fun delete(id: Long)
