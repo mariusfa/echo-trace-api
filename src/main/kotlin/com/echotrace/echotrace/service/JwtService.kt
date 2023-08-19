@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service
 import java.util.*
 import javax.crypto.SecretKey
 
-private const val MILLIS_30_MINUTES = 60 * 30 * 1000
+private const val MILLIS_1_DAY = 60 * 60 * 24 * 1000
 
 @Service
 class JwtService(
@@ -17,7 +17,7 @@ class JwtService(
 ) {
     private val key: SecretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256)
 
-    fun getToken(username: String, expirationTime: Int = MILLIS_30_MINUTES): String {
+    fun getToken(username: String, expirationTime: Int = MILLIS_1_DAY): String {
         return Jwts.builder()
             .setSubject(username)
             .setIssuedAt(Date())
