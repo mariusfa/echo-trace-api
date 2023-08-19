@@ -91,7 +91,7 @@ class NameRepositoryTest(
             userId = userStored.id!!
         )
         nameRepository.insert(name)
-        val nameFound = nameRepository.getByName(name.name)
+        val nameFound = nameRepository.getByName(name.name, userStored)
         assert(nameFound != null)
         assert((nameFound?.name ?: "") == name.name)
     }
@@ -114,7 +114,8 @@ class NameRepositoryTest(
             userId = userStored.id!!
         )
         nameRepository.insert(name)
-        val nameFound = nameRepository.getById(2, userStored)
+        val names = nameRepository.getNames(userStored)
+        val nameFound = nameRepository.getById(names.first().id!!, userStored)
         assert(nameFound != null)
         assert((nameFound?.name ?: "") == name.name)
     }
@@ -136,7 +137,7 @@ class NameRepositoryTest(
             userId = userStored.id!!
         )
         nameRepository.insert(name)
-        val nameFound = nameRepository.getByName(name.name)
+        val nameFound = nameRepository.getByName(name.name, userStored)
 
         val nameUpdated = Name(
             id = nameFound?.id,
@@ -144,7 +145,7 @@ class NameRepositoryTest(
             userId = userStored.id!!
         )
         nameRepository.update(nameUpdated)
-        val nameFoundUpdated = nameRepository.getByName(nameUpdated.name)
+        val nameFoundUpdated = nameRepository.getByName(nameUpdated.name, userStored)
         assert(nameFoundUpdated != null)
         assert((nameFoundUpdated?.name ?: "") == nameUpdated.name)
     }
@@ -166,10 +167,10 @@ class NameRepositoryTest(
             userId = userStored.id!!
         )
         nameRepository.insert(name)
-        val nameFound = nameRepository.getByName(name.name)
+        val nameFound = nameRepository.getByName(name.name, userStored)
         assert(nameFound != null)
         nameRepository.delete(nameFound?.id ?: 0)
-        val nameFoundDeleted = nameRepository.getByName(name.name)
+        val nameFoundDeleted = nameRepository.getByName(name.name, userStored)
         assert(nameFoundDeleted == null)
     }
 }

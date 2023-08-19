@@ -51,16 +51,18 @@ class NameRepository(
         }
     }
 
-    override fun getByName(name: String): Name? {
+    override fun getByName(name: String, user: User): Name? {
         val sql = """
             SELECT * FROM echotraceschema.name
             WHERE name = :name
+            AND user_id = :user_id
         """.trimIndent()
 
         return namedParameterJdbcTemplate.query(
             sql,
             mapOf(
-                "name" to name
+                "name" to name,
+                "user_id" to user.id
             )
         ) { rs, _ ->
             Name(

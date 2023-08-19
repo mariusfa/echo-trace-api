@@ -20,7 +20,7 @@ class NameRepositoryFake() : NameRepositoryInterface {
 
     override fun getNames(user: User): List<Name> = names.values.toList().filter { it.userId == user.id }
 
-    override fun getByName(name: String): Name? = names.values.firstOrNull { it.name == name }
+    override fun getByName(name: String, user: User): Name? = names.values.firstOrNull { it.name == name && it.userId == user.id }
     override fun getById(id: Long, user: User): Name? {
         val name = names[id]
         if (name?.userId == user.id) {

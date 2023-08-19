@@ -10,7 +10,7 @@ interface NameRepositoryInterface {
 
     fun getNames(user: User): List<Name>
 
-    fun getByName(name: String): Name?
+    fun getByName(name: String, user: User): Name?
 
     fun getById(id: Long, user: User): Name?
 

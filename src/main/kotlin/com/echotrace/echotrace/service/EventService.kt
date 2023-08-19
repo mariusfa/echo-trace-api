@@ -29,11 +29,11 @@ class EventService(
     private val nameRepository: NameRepositoryInterface
 ) {
     fun insert(eventRequest: EventRequest) {
-        if (nameRepository.getByName(eventRequest.name) == null) {
+        if (nameRepository.getByName(eventRequest.name, eventRequest.user) == null) {
             nameRepository.insert(Name(null, eventRequest.name, eventRequest.user.id!!))
         }
 
-        val name = nameRepository.getByName(eventRequest.name)!!
+        val name = nameRepository.getByName(eventRequest.name, eventRequest.user)!!
         eventRepository.insert(Event(null, name, OffsetDateTime.now()))
 
     }

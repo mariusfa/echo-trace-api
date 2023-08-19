@@ -54,7 +54,7 @@ class EventRepositoryTest(
             userId = userStored.id!!
         )
         nameRepository.insert(name)
-        val nameStored = nameRepository.getByName("test event")!!
+        val nameStored = nameRepository.getByName("test event", userStored)!!
         val createdAt = OffsetDateTime.now()
         val event = Event(
             id = null,
@@ -95,7 +95,7 @@ class EventRepositoryTest(
             userId = userStored.id!!
         )
         nameRepository.insert(name)
-        val nameStored = nameRepository.getByName("test event")!!
+        val nameStored = nameRepository.getByName("test event", userStored)!!
 
         eventRepository.insert(Event(
             id = null,
@@ -134,8 +134,8 @@ class EventRepositoryTest(
         )
         nameRepository.insert(name)
         nameRepository.insert(wrongName)
-        val nameStored = nameRepository.getByName("test event")!!
-        val wrongNameStored = nameRepository.getByName("wrong event")!!
+        val nameStored = nameRepository.getByName("test event", userStored)!!
+        val wrongNameStored = nameRepository.getByName("wrong event", userStored)!!
 
         eventRepository.insert(Event(
             id = null,
@@ -168,7 +168,7 @@ class EventRepositoryTest(
             userId = userStored.id!!
         )
         nameRepository.insert(name)
-        val nameStored = nameRepository.getByName("test event")!!
+        val nameStored = nameRepository.getByName("test event", userStored)!!
 
         eventRepository.insert(Event(
             id = null,
@@ -202,7 +202,7 @@ class EventRepositoryTest(
             userId = userStored.id!!
         )
         nameRepository.insert(name)
-        val nameStored = nameRepository.getByName("test event")!!
+        val nameStored = nameRepository.getByName("test event", userStored)!!
         val event = Event(
             id = null,
             name = nameStored,
@@ -251,8 +251,8 @@ class EventRepositoryTest(
         )
         nameRepository.insert(name)
         nameRepository.insert(wrongName)
-        val nameStored = nameRepository.getByName("test event")!!
-        val wrongNameStored = nameRepository.getByName("wrong event")!!
+        val nameStored = nameRepository.getByName("test event", userStored)!!
+        val wrongNameStored = nameRepository.getByName("wrong event", userStored)!!
 
         eventRepository.insert(Event(
             id = null,
