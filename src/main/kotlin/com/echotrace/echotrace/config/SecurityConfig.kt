@@ -66,6 +66,7 @@ class SecurityConfig(
 //        configuration.allowedOrigins = listOf("http://localhost:5173")
 //        configuration.allowedMethods = listOf("GET", "POST")
 //        configuration.allowedHeaders = listOf("*")
+        configuration.allowedMethods = listOf("*")
         val source = UrlBasedCorsConfigurationSource()
         source.registerCorsConfiguration("/**", configuration)
         return source
