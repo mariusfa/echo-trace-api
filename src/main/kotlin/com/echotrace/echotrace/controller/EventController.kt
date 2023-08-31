@@ -48,4 +48,10 @@ class EventController(
         val user = SecurityContextHolder.getContext().authentication.principal as User
         return eventService.getDetails(id, user).toDTO()
     }
+
+    @DeleteMapping("/{id}")
+    fun deleteEvent(@PathVariable id: Long) {
+        val user = SecurityContextHolder.getContext().authentication.principal as User
+        eventService.delete(id, user)
+    }
 }

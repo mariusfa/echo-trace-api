@@ -7,6 +7,7 @@ import com.echotrace.echotrace.repository.fakes.NameRepositoryFake
 import com.echotrace.echotrace.repository.fakes.UserRepositoryFake
 import com.echotrace.echotrace.service.UserService
 import com.echotrace.echotrace.service.domain.UserRequest
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import java.time.OffsetDateTime
@@ -127,6 +129,33 @@ class EventIT(
                 )
             }
         }
+    }
+
+    @Test
+    fun `should delete events`() {
+        val user = UserRequest("test user", "test password")
+        userService.register(user)
+        val token = userService.login(user)
+        val userId = userRepositoryFake.users[0]?.id
+
+        nameRepositoryFake.insert(Name(
+            id = null,
+            name = "test event",
+            userId = userId!!
+        ))
+        val storedName = nameRepositoryFake.names[0]!!
+        eventRepositoryFake.insert(Event(
+            id = null,
+            name = storedName,
+            createdAt = OffsetDateTime.now()
+        ))
+        mvc.delete("/event/${storedName.id}") {
+            header("Authorization", "Bearer $token")
+        }.andExpect {
+            status { isOk() }
+        }
+
+        assertThat(eventRepositoryFake.events).isEmpty()
     }
 
     @Test

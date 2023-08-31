@@ -26,13 +26,14 @@ class SecurityConfig(
         http.cors {}
             .securityMatcher(RequestMatcher { request ->
                 val path = request.requestURI
-                path.startsWith("/user") || (path.startsWith("/event") && (request.method == "GET" || request.method == "OPTIONS"))
+                path.startsWith("/user") || (path.startsWith("/event") && (request.method == "GET" || request.method == "OPTIONS" || request.method == "DELETE"))
             })
             .csrf { it.disable() }
             .authorizeHttpRequests {
                 it.requestMatchers("/user/api-token").authenticated()
                 it.requestMatchers("/user/validate").authenticated()
                 it.requestMatchers("/event").authenticated()
+                it.requestMatchers("/event/**").authenticated()
                 it.anyRequest().permitAll()
             }
             .addFilterBefore(JwtFilter(jwtService), UsernamePasswordAuthenticationFilter::class.java)

@@ -52,4 +52,13 @@ class EventService(
         val dayCount = eventRepository.getCountEachDay(nameId, 30)
         return EventDetails(nameId, name.name, dayCount)
     }
+
+    fun delete(nameId: Long, user: User) {
+        val name = nameRepository.getById(nameId, user)
+        if (name == null || name.userId != user.id) {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Name not found")
+        }
+        eventRepository.deleteAllByNameId(nameId)
+        nameRepository.delete(nameId)
+    }
 }
